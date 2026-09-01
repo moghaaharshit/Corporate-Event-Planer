@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sky Events | Luxury Wedding Planner in Navi Mumbai & Mumbai</title>
+    <meta name="description" content="Sky Events is a luxury wedding planning and execution company in Navi Mumbai & Mumbai. From venue selection to décor, hospitality to complete wedding execution.">
+    <meta name="keywords" content="luxury wedding planner, wedding planner Mumbai, wedding planner Navi Mumbai, wedding decorator, wedding venues Maharashtra, destination wedding India">
+    <meta property="og:title" content="Sky Events | Luxury Weddings, Thoughtfully Crafted">
+    <meta property="og:description" content="From venue to décor, hospitality to execution — one trusted partner for your entire wedding experience.">
+    <meta property="og:type" content="website">
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/png" href="logo.png">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Inter:wght@300;400;500;600;700&display=swap');
+
+        :root {
+            --ivory: #F5F0E8;
+            --cream: #FAF7F2;
+            --warm-dark: #1A1714;
+            --warm-darker: #0F0E0C;
+            --warm-gray: #2A2723;
+            --gold: #C9A96E;
+            --gold-light: #D4B87A;
+            --text-primary: #1A1714;
+            --text-secondary: #6B6560;
+            --text-light: #9B9590;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--cream);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            font-weight: 400;
+        }
+
+        .text-secondary { font-weight: 500; }
+        .text-light { font-weight: 400; }
+
+        .font-display {
+            font-family: 'Cormorant Garamond', serif;
+        }
+
+        /* Animations */
+        .fade-up {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .fade-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .fade-in {
+            opacity: 0;
+            transition: opacity 0.8s ease;
+        }
+        .fade-in.visible {
+            opacity: 1;
+        }
+
+        .slide-left {
+            opacity: 0;
+            transform: translateX(-40px);
+            transition: all 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .slide-left.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .slide-right {
+            opacity: 0;
+            transform: translateX(40px);
+            transition: all 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .slide-right.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .scale-in {
+            opacity: 0;
+            transform: scale(0.95);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .scale-in.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--cream); }
+        ::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 3px; }
+
+        /* Sticky Nav */
+        .nav-sticky {
+            background: rgba(250, 247, 242, 0.95);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 1px 0 rgba(0,0,0,0.06);
+        }
+
+        /* WhatsApp Button */
+        .whatsapp-float {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 100;
+            width: 56px;
+            height: 56px;
+            background: #25D366;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .whatsapp-float:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 30px rgba(37, 211, 102, 0.5);
+        }
+
+        /* Gallery Filter */
+        .filter-btn {
+            transition: all 0.3s ease;
+        }
+        .filter-btn.active {
+            background-color: var(--warm-dark);
+            color: white;
+        }
+
+        /* Wedding Card Hover */
+        .wedding-card img {
+            transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .wedding-card:hover img {
+            transform: scale(1.05);
+        }
+
+        /* Enquiry Form */
+        .form-input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid #E5E0D8;
+            border-radius: 8px;
+            background: white;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            color: var(--text-primary);
+            transition: border-color 0.3s ease;
+            outline: none;
+        }
+        .form-input:focus {
+            border-color: var(--gold);
+        }
+        .form-input::placeholder {
+            color: var(--text-light);
+        }
+
+        select.form-input {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236B6560' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        ivory: '#F5F0E8',
+                        cream: '#FAF7F2',
+                        gold: '#C9A96E',
+                        'gold-light': '#D4B87A',
+                        'warm-dark': '#1A1714',
+                        'warm-darker': '#0F0E0C',
+                        'warm-gray': '#2A2723',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        // Intersection Observer Hook
+        const useInView = (threshold = 0.1) => {
+            const ref = useRef(null);
+            const [isVisible, setIsVisible] = useState(false);
+            useEffect(() => {
+                const observer = new IntersectionObserver(
+                    ([entry]) => { if (entry.isIntersecting) setIsVisible(true); },
+                    { threshold }
+                );
+                if (ref.current) observer.observe(ref.current);
+                return () => observer.disconnect();
+            }, [threshold]);
+            return [ref, isVisible];
+        };
+
+        // ─── FIREBASE CONFIG ──────────────────────────────────
+        const firebaseConfig = {
+            apiKey: "AIzaSyAASaHtYncdmju3EkX-WJLqU7BLKIzV7Lk",
+            authDomain: "sky-events-48773.firebaseapp.com",
+            projectId: "sky-events-48773",
+            databaseURL: "https://sky-events-48773-default-rtdb.firebaseio.com",
+            storageBucket: "sky-events-48773.firebasestorage.app",
+            messagingSenderId: "358695065967",
+            appId: "1:358695065967:web:0c3878bb9ed844fe74309a"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // ─── SITE DATA HOOK ───────────────────────────────────
+        const useSiteData = () => {
+            const [siteData, setSiteData] = useState({
+                weddings: [], venues: [], decor: [], gallery: [], testimonials: [], stats: {}, about: {}, locations: []
+            });
+            useEffect(() => {
+                const unsubscribe = db.collection('siteData').doc('main').onSnapshot((doc) => {
+                    if (doc.exists) {
+                        const val = doc.data();
+                        setSiteData({
+                            weddings: val.weddings || [],
+                            venues: val.venues || [],
+                            decor: val.decor || [],
+                            gallery: val.gallery || [],
+                            testimonials: val.testimonials || [],
+                            stats: val.stats || {},
+                            about: val.about || {},
+                            locations: val.locations || []
+                        });
+                    }
+                });
+                return () => unsubscribe();
+            }, []);
+            return siteData;
+        };
+
+        // ─── NAVBAR ────────────────────────────────────────────
+        const Navbar = () => {
+            const [scrolled, setScrolled] = useState(false);
+            const [mobileOpen, setMobileOpen] = useState(false);
+
+            useEffect(() => {
+                const onScroll = () => setScrolled(window.scrollY > 60);
+                window.addEventListener('scroll', onScroll);
+                return () => window.removeEventListener('scroll', onScroll);
+            }, []);
+
+            const navLinks = [
+                { label: 'HOME', href: '#home' },
+                { label: 'WEDDINGS', href: '#weddings' },
+                { label: 'VENUES', href: '#venues' },
+                { label: 'DÉCOR', href: '#decor' },
+                { label: 'GALLERY', href: '#gallery' },
+                { label: 'ABOUT', href: '#about' },
+                { label: 'CONTACT', href: 'foam.html' },
+            ];
+
+            return (
+                <nav className={`fixed w-full z-50 transition-all duration-500 ${scrolled ? 'nav-sticky py-3' : 'py-5 bg-transparent'}`}>
+                    <div className="max-w-7xl mx-auto px-5 md:px-8 flex justify-between items-center">
+                        <a href="#home" className="flex items-center gap-2">                                    <img src="logo.png" alt="Sky Events" className="h-10 md:h-11 w-auto object-contain rounded-lg" />
+                        </a>
+
+                        {/* Desktop Nav */}
+                        <div className="hidden lg:flex items-center gap-7">
+                            {navLinks.map(link => (
+                                <a key={link.href} href={link.href}                                    className={`text-xs tracking-[0.12em] font-medium transition-colors hover:text-gold ${scrolled ? 'text-warm-dark' : 'text-white/90'}`}>
+                                    {link.label}
+                                </a>
+                            ))}
+                            <a href="foam.html" className="bg-warm-dark text-white px-6 py-2.5 rounded-full text-xs tracking-widest font-medium hover:bg-gold transition-all duration-300 shadow-sm">
+                                PLAN YOUR WEDDING
+                            </a>
+                        </div>
+
+                        {/* Mobile Toggle */}
+                        <button onClick={() => setMobileOpen(!mobileOpen)} className="lg:hidden focus:outline-none">
+                            <div className="space-y-1.5">
+                                <span className={`block w-6 h-0.5 transition-all duration-300 ${mobileOpen ? 'rotate-45 translate-y-2' : ''} bg-warm-dark`}></span>
+                                <span className={`block w-6 h-0.5 transition-all duration-300 ${mobileOpen ? 'opacity-0' : ''} bg-warm-dark`}></span>
+                                <span className={`block w-6 h-0.5 transition-all duration-300 ${mobileOpen ? '-rotate-45 -translate-y-2' : ''} bg-warm-dark`}></span>
+                            </div>
+                        </button>
+                    </div>
+
+                    {/* Mobile Menu */}
+                    {mobileOpen && (
+                        <div className="lg:hidden bg-cream border-t border-gray-200 px-6 py-8">
+                            <div className="flex flex-col space-y-5">
+                                {navLinks.map(link => (
+                                    <a key={link.href} href={link.href} onClick={() => setMobileOpen(false)}
+                                       className="text-warm-dark text-sm tracking-widest font-medium hover:text-gold transition-colors">
+                                        {link.label}
+                                    </a>
+                                ))}
+                                <a href="foam.html" className="bg-warm-dark text-white px-6 py-3 rounded-full text-xs tracking-widest font-medium text-center mt-2 hover:bg-gold transition-all">
+                                    PLAN YOUR WEDDING
+                                </a>
+                            </div>
+                        </div>
+                    )}
+                </nav>
+            );
+        };
+
+        // ─── HERO ──────────────────────────────────────────────
+        const Hero = () => {
+            const [ref, isVisible] = useInView();
+            return (
+                <section id="home" className="relative min-h-screen flex items-center" ref={ref}>
+                    <div className="absolute inset-0 z-0">
+                        <img src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=2000"
+                             alt="Luxury Wedding" className="w-full h-full object-cover" />
+                        <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent"></div>
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
+                    </div>
+
+                    <div className="relative z-10 max-w-7xl mx-auto px-5 md:px-8 w-full pt-32 pb-20">
+                        <div className="max-w-2xl">
+                            <p className={`text-gold-light tracking-[0.25em] text-[10px] md:text-xs mb-4 md:mb-6 uppercase fade-up ${isVisible ? 'visible' : ''}`}>
+                                SKY EVENTS
+                            </p>
+                            <h1 className={`font-display text-[2.5rem] sm:text-6xl md:text-7xl lg:text-8xl text-white leading-[1.05] mb-5 md:mb-8 fade-up ${isVisible ? 'visible' : ''}`} style={{transitionDelay:'0.15s'}}>
+                                Luxury Weddings,<br />
+                                <span className="italic text-gold-light">Thoughtfully Crafted.</span>
+                            </h1>
+                            <p className={`text-white/70 text-sm md:text-lg leading-relaxed mb-8 md:mb-12 max-w-lg fade-up ${isVisible ? 'visible' : ''}`} style={{transitionDelay:'0.3s'}}>
+                                From venue to décor, hospitality to execution — one trusted partner for your entire wedding experience.
+                            </p>
+                            <div className={`flex flex-col sm:flex-row gap-3 md:gap-4 fade-up ${isVisible ? 'visible' : ''}`} style={{transitionDelay:'0.45s'}}>
+                                <a href="foam.html" className="bg-gold text-white px-8 py-3.5 rounded-full text-xs tracking-widest font-semibold hover:bg-gold-light transition-all text-center">
+                                    PLAN YOUR WEDDING
+                                </a>
+                                <a href="#weddings" className="border border-white/30 text-white px-8 py-3.5 rounded-full text-xs tracking-widest font-semibold hover:border-gold-light hover:text-gold-light transition-all text-center">
+                                    EXPLORE OUR WEDDINGS
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Scroll Indicator */}
+                    <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 fade-up visible">
+                        <span className="text-white/40 text-[9px] tracking-[0.3em]">SCROLL</span>
+                        <div className="w-px h-10 bg-gradient-to-b from-white/40 to-transparent"></div>
+                    </div>
+                </section>
+            );
+        };
+
+        // ─── BRAND STATEMENT ───────────────────────────────────
+        const BrandStatement = () => {
+            const [ref, isVisible] = useInView();
+            return (
+                <section className="py-20 md:py-28 bg-cream" ref={ref}>
+                    <div className="max-w-4xl mx-auto px-5 md:px-8 text-center">
+                        <p className={`text-gold tracking-[0.2em] text-[10px] md:text-xs mb-4 fade-up ${isVisible ? 'visible' : ''}`}>OUR PHILOSOPHY</p>
+                        <h2 className={`font-display text-3xl md:text-5xl lg:text-6xl leading-tight mb-6 md:mb-8 fade-up ${isVisible ? 'visible' : ''}`} style={{transitionDelay:'0.1s'}}>
+                            More Than a Wedding.<br />
+                            <span className="italic text-gold">An Experience, Seamlessly Executed.</span>
+                        </h2>
+                        <p className={`text-secondary text-sm md:text-base leading-relaxed max-w-2xl mx-auto fade-up ${isVisible ? 'visible' : ''}`} style={{transitionDelay:'0.2s'}}>
+                            At Sky Events, we manage the complete wedding journey — from planning and venue selection to décor, production, hospitality and final execution. Every detail is thoughtfully curated so you can be present in every moment.
+                        </p>
+                    </div>
+                </section>
+            );
+        };
+
+        // ─── OUR WEDDINGS ──────────────────────────────────────
+        const defaultWeddings = [
+            { couple: 'Priya & Arjun', venue: 'The Leela, Mumbai', type: 'Grand Celebration', img: 'https://images.unsplash.com/photo-1606800052052-a08af7148866?auto=format&fit=crop&q=80&w=800', desc: 'A three-day celebration blending traditional elegance with contemporary design across ballrooms and outdoor lawns.' },
+            { couple: 'Meera & Vikram', venue: 'Taj Palace, New Delhi', type: 'Destination Wedding', img: 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&q=80&w=800', desc: 'An intimate destination wedding with bespoke mandap design, floral ceilings and a starlit reception.' },
+            { couple: 'Ananya & Rohan', venue: 'ITC Grand Chola, Chennai', type: 'Royal Celebration', img: 'https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&q=80&w=800', desc: 'A grand South Indian wedding with intricate décor, cultural performances and a luxurious reception.' },
+            { couple: 'Kavya & Dev', venue: 'JW Marriott, Pune', type: 'Contemporary Wedding', img: 'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?auto=format&fit=crop&q=80&w=800', desc: 'A modern celebration with minimalist aesthetics, statement lighting and an elegant cocktail evening.' }
+        ];
+        const OurWeddings = ({ data }) => {
+            const [ref, isVisible] = useInView();
+            const weddings = (data && data.length > 0) ? data : defaultWeddings;
+
+            return (
+                <section id="weddings" className="py-20 md:py-28 bg-white" ref={ref}>
+                    <div className="max-w-7xl mx-auto px-5 md:px-8">
+                        <div className="text-center mb-12 md:mb-16">
+                            <p className={`text-gold tracking-[0.2em] text-[10px] md:text-xs mb-3 fade-up ${isVisible ? 'visible' : ''}`}>PORTFOLIO</p>
+                            <h2 className={`font-display text-3xl md:text-5xl lg:text-6xl fade-up ${isVisible ? 'visible' : ''}`} style={{transitionDelay:'0.1s'}}>
+                                Our Weddings
+                            </h2>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+                            {weddings.map((w, i) => (
+                                <div key={i} className={`wedding-card group cursor-pointer scale-in ${isVisible ? 'visible' : ''}`} style={{transitionDelay:`${i*0.1}s`}}>
+                                    <div className="relative overflow-hidden rounded-2xl aspect-[4/3] mb-4">
+                                        <img src={w.img} alt={w.couple} className="w-full h-full object-cover" />
+                                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-500 flex items-end p-6">
+                                            <span className="text-white text-xs tracking-widest opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-500">
+                                                VIEW WEDDING <i className="fas fa-arrow-right ml-2"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <p className="text-gold text-[10px] tracking-[0.15em] mb-1">{w.type}</p>
+                                    <h3 className="font-display text-xl md:text-2xl mb-1">{w.couple}</h3>
+                                    <p className="text-secondary text-xs mb-2 flex items-center gap-1.5">
+                                        <i className="fas fa-map-marker-alt text-gold text-[10px]"></i> {w.venue}
+                                    </p>
+                                    <p className="text-light text-xs leading-relaxed hidden md:block">{w.desc}</p>
+                                </div>
+                            ))}
+                        </div>
+
+                        <div className="text-center mt-12">
+                            <a href="#" className="inline-flex items-center gap-2 border-2 border-warm-dark text-warm-dark px-8 py-3 rounded-full text-xs tracking-widest font-semibold hover:bg-warm-dark hover:text-white transition-all">
+                                VIEW ALL WEDDINGS <i className="fas fa-arrow-right text-[10px]"></i>
+                            </a>
+                        </div>
+                    </div>
+                </section>
+            );
+        };
+
+        // ─── VENUES ────────────────────────────────────────────
+        const defaultVenues = [
+            { name: 'The Leela Palace', location: 'Mumbai', type: 'Luxury Hotel', capacity: '200–800 guests', img: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=800' },
+            { name: 'Taj Lands End', location: 'Mumbai', type: 'Premium Property', capacity: '150–600 guests', img: 'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?auto=format&fit=crop&q=80&w=800' },
+            { name: 'ITC Grand Bharat', location: 'Gurugram', type: 'Destination Venue', capacity: '300–1000 guests', img: 'https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&q=80&w=800' },
+            { name: 'JW Marriott Sahar', location: 'Mumbai', type: 'Grand Ballroom', capacity: '200–700 guests', img: 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&q=80&w=800' },
+            { name: 'Radisson Blu Resort', location: 'Karjat', type: 'Destination Venue', capacity: '100–500 guests', img: 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&q=80&w=800' },
+            { name: 'Della Resort', location: 'Lonavala', type: 'Outdoor Venue', capacity: '150–600 guests', img: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&q=80&w=800' }
+        ];
+        const Venues = ({ data }) => {
+            const [ref, isVisible] = useInView();
+            const venues = (data && data.length > 0) ? data : defaultVenues;
+
+            return (
+                <section id="venues" className="py-20 md:py-28 bg-cream" ref={ref}>
+                    <div className="max-w-7xl mx-auto px-5 md:px-8">
+                        <div className="text-center mb-12 md:mb-16">
+                            <p className={`text-gold tracking-[0.2em] text-[10px] md:text-xs mb-3 fade-up ${isVisible ? 'visible' : ''}`}>THE RIGHT SETTING</p>
+                            <h2 className={`font-display text-3xl md:text-5xl lg:text-6xl mb-4 fade-up ${isVisible ? 'visible' : ''}`} style={{transitionDelay:'0.1s'}}>
+                                Exceptional Venues
+                            </h2>
+                            <p className={`text-secondary text-sm md:text-base max-w-xl mx-auto fade-up ${isVisible ? 'visible' : ''}`} style={{transitionDelay:'0.2s'}}>
+                                The right setting for your celebration. We help you access and coordinate premium wedding venues and properties.
+                            </p>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
+                            {venues.map((v, i) => (
+                                <div key={i} className={`group bg-white rounded-2xl overflow-hidden border border-gray-100 hover:shadow-lg transition-all duration-500 scale-in ${isVisible ? 'visible' : ''}`} style={{transitionDelay:`${i*0.08}s`}}>
+                                    <div className="relative overflow-hidden aspect-[16/10]">
+                                        <img src={v.img} alt={v.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                                        <span className="absolute top-3 left-3 bg-white/90 backdrop-blur text-[10px] tracking-widest text-warm-dark px-3 py-1.5 rounded-full font-medium">{v.type}</span>
+                                    </div>
+                                    <div className="p-5">
+                                        <h3 className="font-display text-xl mb-1">{v.name}</h3>
+                                        <p className="text-secondary text-xs mb-2 flex items-center gap-1.5">
+                                            <i className="fas fa-map-marker-alt text-gold text-[10px]"></i> {v.location}
+                                        </p>
+                                        <p className="text-light text-xs mb-4">Capacity: {v.capacity}</p>
+                                        <a href="foam.html" className="inline-flex items-center gap-1.5 text-gold text-xs tracking-wider font-semibold hover:gap-2.5 transition-all">
+                                            ENQUIRE <i className="fas fa-arrow-right text-[10px]"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+            );
+        };
+
+        // ─── DÉCOR ─────────────────────────────────────────────
+        const defaultDecor = [
+            { name: 'Mandap Designs', img: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&q=80&w=600' },
+            { name: 'Floral Installations', img: 'https://images.unsplash.com/photo-1478146059778-26028b07395a?auto=format&fit=crop&q=80&w=600' },
+            { name: 'Stage Setups', img: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&q=80&w=600' },
+            { name: 'Entrance Décor', img: 'https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?auto=format&fit=crop&q=80&w=600' },
+            { name: 'Reception Styling', img: 'https://images.unsplash.com/photo-1505236858219-8359eb29e329?auto=format&fit=crop&q=80&w=600' },
+            { name: 'Lighting Design', img: 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&q=80&w=600' },
+            { name: 'Table Styling', img: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&q=80&w=600' },
+            { name: 'Ceiling Installations', img: 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&q=80&w=600' }
+        ];
+        const Decor = ({ data }) => {
+            const [ref, isVisible] = useInView();
+            const categories = (data && data.length > 0) ? data : defaultDecor;
+
+            return (
+                <section id="decor" className="py-20 md:py-28 bg-white" ref={ref}>
+                    <div className="max-w-7xl mx-auto px-5 md:px-8">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 md:gap-16 items-start">
+                            <div className={`slide-left ${isVisible ? 'visible' : ''}`}>
+                                <p className="text-gold tracking-[0.2em] text-[10px] md:text-xs mb-3">STYLING & DESIGN</p>
+                                <h2 className="font-display text-3xl md:text-5xl lg:text-6xl mb-5 md:mb-6 leading-tight">
+                                    Designed Around<br />
+                                    <span className="italic text-gold">Your Celebration.</span>
+                                </h2>
+                                <p className="text-secondary text-sm md:text-base leading-relaxed mb-6 md:mb-8 max-w-md">
+                                    Every décor concept is planned around the venue, event format, aesthetic and overall guest experience. From grand luxury to minimal contemporary — we design what your celebration deserves.
+                                </p>
+                                <div className="grid grid-cols-2 gap-3">
+                                    {['Mandap & Stage', 'Floral & Ceiling', 'Lighting Design', 'Table Styling'].map((item, i) => (
+                                        <div key={i} className="flex items-center gap-2.5 bg-cream rounded-xl px-4 py-3">
+                                            <i className="fas fa-check text-gold text-xs"></i>
+                                            <span className="text-xs font-medium">{item}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <div className={`grid grid-cols-2 gap-3 md:gap-4 slide-right ${isVisible ? 'visible' : ''}`}>
+                                {categories.map((cat, i) => (
+                                    <div key={i} className={`group relative overflow-hidden rounded-xl aspect-square scale-in ${isVisible ? 'visible' : ''}`} style={{transitionDelay:`${i*0.06}s`}}>
+                                        <img src={cat.img} alt={cat.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-4">
+                                            <span className="text-white text-xs tracking-wider font-medium">{cat.name}</span>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            );
+        };
+
+        // ─── SERVICES ──────────────────────────────────────────
+        const Services = () => {
+            const [ref, isVisible] = useInView();
+            const services = [
+                { icon: 'fa-clipboard-list', title: 'Wedding Planning & Management', desc: 'Complete planning, scheduling and coordination.' },
+                { icon: 'fa-building', title: 'Venue Selection', desc: 'Assistance with premium venues and properties.' },
+                { icon: 'fa-palette', title: 'Décor & Styling', desc: 'Concept development, design and execution.' },
+                { icon: 'fa-lightbulb', title: 'Event Production', desc: 'Lighting, sound, stage and technical infrastructure.' },
+                { icon: 'fa-camera', title: 'Photography & Cinematography', desc: 'Professional documentation of the celebration.' },
+                { icon: 'fa-music', title: 'Entertainment & Artists', desc: 'Performances and entertainment management.' },
+                { icon: 'fa-concierge-bell', title: 'Hospitality & Guest Management', desc: 'Guest coordination and on-ground assistance.' },
+                { icon: 'fa-handshake', title: 'Vendor Coordination', desc: 'Managing multiple wedding partners and suppliers.' },
+                { icon: 'fa-check-double', title: 'Complete Event Execution', desc: 'End-to-end execution from planning to the final moment.' }
+            ];
+
+            return (
+                <section className="py-20 md:py-28 bg-cream" ref={ref}>
+                    <div className="max-w-7xl mx-auto px-5 md:px-8">
+                        <div className="text-center mb-12 md:mb-16">
+                            <p className={`text-gold tracking-[0.2em] text-[10px] md:text-xs mb-3 fade-up ${isVisible ? 'visible' : ''}`}>WHAT WE DO</p>
+                            <h2 className={`font-display text-3xl md:text-5xl lg:text-6xl mb-4 fade-up ${isVisible ? 'visible' : ''}`} style={{transitionDelay:'0.1s'}}>
+                                Our Services
+                            </h2>
+                            <p className={`text-secondary text-sm md:text-base fade-up ${isVisible ? 'visible' : ''}`} style={{transitionDelay:'0.15s'}}>
+                                One Team. One Vision. Complete Execution.
+                            </p>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
+                            {services.map((s, i) => (
+                                <div key={i} className={`bg-white rounded-2xl p-6 md:p-8 border border-gray-100 hover:border-gold/30 hover:shadow-md transition-all duration-500 scale-in ${isVisible ? 'visible' : ''}`} style={{transitionDelay:`${i*0.06}s`}}>
+                                    <div className="w-10 h-10 bg-ivory rounded-full flex items-center justify-center mb-4">
+                                        <i className={`fas ${s.icon} text-gold text-sm`}></i>
+                                    </div>
+                                    <h3 className="font-display text-lg mb-2">{s.title}</h3>
+                                    <p className="text-secondary text-xs leading-relaxed">{s.desc}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+            );
+        };
+
+        // ─── WHY SKY EVENTS ────────────────────────────────────
+        const WhySkyEvents = () => {
+            const [ref, isVisible] = useInView();
+            const points = [
+                { icon: 'fa-route', title: 'End-to-End Expertise', desc: 'From the first idea to the final execution.' },
+                { icon: 'fa-hotel', title: 'Premium Venue Experience', desc: 'Experience across premium hotels, properties and wedding venues.' },
+                { icon: 'fa-paint-brush', title: 'Design-Led Approach', desc: 'Décor and styling created around the identity of each celebration.' },
+                { icon: 'fa-cogs', title: 'Seamless Execution', desc: 'Multiple teams, vendors and production elements managed under one roof.' },
+                { icon: 'fa-search', title: 'Attention to Detail', desc: 'The details guests may never notice are often what make the experience exceptional.' },
+                { icon: 'fa-users', title: 'Experienced Team', desc: 'Backed by years of experience in weddings and large-scale event execution.' }
+            ];
+
+            return (
+                <section className="py-20 md:py-28 bg-warm-dark text-white" ref={ref}>
+                    <div className="max-w-7xl mx-auto px-5 md:px-8">
+                        <div className="text-center mb-12 md:mb-16">
+                            <p className={`text-gold tracking-[0.2em] text-[10px] md:text-xs mb-3 fade-up ${isVisible ? 'visible' : ''}`}>WHY CHOOSE US</p>
+                            <h2 className={`font-display text-3xl md:text-5xl lg:text-6xl mb-4 fade-up ${isVisible ? 'visible' : ''}`} style={{transitionDelay:'0.1s'}}>
+                                Why Sky Events?
+                            </h2>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+                            {points.map((p, i) => (
+                                <div key={i} className={`text-center px-4 fade-up ${isVisible ? 'visible' : ''}`} style={{transitionDelay:`${i*0.08}s`}}>
+                                    <div className="w-14 h-14 bg-white/5 border border-white/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                                        <i className={`fas ${p.icon} text-gold text-lg`}></i>
+                                    </div>
+                                    <h3 className="font-display text-lg mb-2">{p.title}</h3>
+                                    <p className="text-white/50 text-xs leading-relaxed">{p.desc}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+            );
+        };
+
+        // ─── STATS ─────────────────────────────────────────────
+        const Stats = ({ data }) => {
+            const [ref, isVisible] = useInView();
+            const stats = [
+                { value: data?.years || '—', label: 'Years of Experience' },
+                { value: data?.weddings || '—', label: 'Weddings Executed' },
+                { value: data?.venues || '—', label: 'Premium Venues' },
+                { value: data?.cities || '—', label: 'Cities & Destinations' }
+            ];
+
+            return (
+                <section className="py-16 md:py-20 bg-cream border-y border-gray-200" ref={ref}>
+                    <div className="max-w-6xl mx-auto px-5 md:px-8">
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
+                            {stats.map((s, i) => (
+                                <div key={i} className={`text-center fade-up ${isVisible ? 'visible' : ''}`} style={{transitionDelay:`${i*0.1}s`}}>
+                                    <h3 className="font-display text-4xl md:text-5xl text-gold mb-2">{s.value}</h3>
+                                    <p className="text-secondary text-xs tracking-wider uppercase">{s.label}</p>
+                                </div>
+                            ))}
+                        </div>
+                        <p className="text-center text-light text-[10px] tracking-wider mt-6">Actual figures to be updated by the client.</p>
+                    </div>
+                </section>
+            );
+        };
+
+        // ─── GALLERY ───────────────────────────────────────────
+        const defaultGallery = [
+            { img: 'https://images.unsplash.com/photo-1606800052052-a08af7148866?auto=format&fit=crop&q=80&w=800', category: 'Weddings' },
+            { img: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&q=80&w=800', category: 'Décor' },
+            { img: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=800', category: 'Venues' },
+            { img: 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=800', category: 'Celebrations' },
+            { img: 'https://images.unsplash.com/photo-1478146059778-26028b07395a?auto=format&fit=crop&q=80&w=800', category: 'Décor' },
+            { img: 'https://images.unsplash.com/photo-1606800052052-a08af7148866?auto=format&fit=crop&q=80&w=600', category: 'Details' },
+            { img: 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&q=80&w=800', category: 'Celebrations' },
+            { img: 'https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&q=80&w=800', category: 'Weddings' },
+            { img: 'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?auto=format&fit=crop&q=80&w=800', category: 'Venues' },
+            { img: 'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?auto=format&fit=crop&q=80&w=800', category: 'Details' },
+            { img: 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&q=80&w=800', category: 'Décor' },
+            { img: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&q=80&w=800', category: 'Celebrations' }
+        ];
+        const Gallery = ({ data }) => {
+            const [ref, isVisible] = useInView();
+            const [filter, setFilter] = useState('All');
+            const rawImages = (data && data.length > 0) ? data : defaultGallery;
+            const images = rawImages.map(g => ({ src: g.img, cat: g.category || 'All' }));
+
+            const filters = ['All', 'Weddings', 'Décor', 'Venues', 'Celebrations', 'Details'];
+            const filtered = filter === 'All' ? images : images.filter(img => img.cat === filter);
+
+            return (
+                <section id="gallery" className="py-20 md:py-28 bg-white" ref={ref}>
+                    <div className="max-w-7xl mx-auto px-5 md:px-8">
+                        <div className="text-center mb-10 md:mb-14">
+                            <p className={`text-gold tracking-[0.2em] text-[10px] md:text-xs mb-3 fade-up ${isVisible ? 'visible' : ''}`}>VISUAL STORY</p>
+                            <h2 className={`font-display text-3xl md:text-5xl lg:text-6xl mb-6 fade-up ${isVisible ? 'visible' : ''}`} style={{transitionDelay:'0.1s'}}>
+                                Gallery
+                            </h2>
+                            <div className={`flex flex-wrap justify-center gap-2 fade-up ${isVisible ? 'visible' : ''}`} style={{transitionDelay:'0.2s'}}>
+                                {filters.map(f => (
+                                    <button key={f} onClick={() => setFilter(f)}
+                                        className={`filter-btn px-5 py-2 rounded-full text-xs tracking-wider font-medium border border-gray-200 ${filter === f ? 'active' : 'text-secondary hover:border-gold'}`}>
+                                        {f.toUpperCase()}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
+                            {filtered.map((img, i) => (
+                                <div key={`${filter}-${i}`} className={`group relative overflow-hidden rounded-xl aspect-[3/4] scale-in ${isVisible ? 'visible' : ''}`} style={{transitionDelay:`${i*0.05}s`}}>
+                                    <img src={img.src} alt={img.cat} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-500"></div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+            );
+        };
+
+        // ─── ABOUT + FOUNDER ───────────────────────────────────
+        const About = ({ data }) => {
+            const [ref, isVisible] = useInView();
+            return (
+                <section id="about" className="py-20 md:py-28 bg-cream" ref={ref}>
+                    <div className="max-w-7xl mx-auto px-5 md:px-8">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 md:gap-16 items-center">
+                            <div className={`slide-left ${isVisible ? 'visible' : ''}`}>
+                                <div className="relative">
+                                    <img src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=800"
+                                         alt="Sky Events Wedding" className="rounded-2xl aspect-[4/5] object-cover w-full" />
+                                    <div className="absolute -bottom-6 -right-4 md:-right-6 bg-white rounded-2xl p-5 md:p-6 shadow-lg max-w-[200px]">
+                                        <p className="font-display text-3xl text-gold font-bold">6+</p>
+                                        <p className="text-secondary text-xs">Years of wedding & event excellence</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className={`slide-right ${isVisible ? 'visible' : ''}`}>
+                                <p className="text-gold tracking-[0.2em] text-[10px] md:text-xs mb-3">ABOUT SKY EVENTS</p>
+                                <h2 className="font-display text-3xl md:text-4xl lg:text-5xl mb-5 md:mb-6 leading-tight">
+                                    The People Behind<br />
+                                    <span className="italic text-gold">the Celebrations.</span>
+                                </h2>
+                                <p className="text-secondary text-sm md:text-base leading-relaxed mb-6">
+                                    Sky Events is a luxury wedding planning and execution company, a division of Kad Events Pvt. Ltd. Based in Navi Mumbai, we have executed weddings and décor projects across premium properties and venues in Maharashtra and beyond.
+                                </p>
+                                <p className="text-secondary text-sm md:text-base leading-relaxed mb-8">
+                                    Our approach is design-led, detail-oriented and centred around creating seamless experiences. We don't just plan weddings — we craft celebrations that reflect who you are.
+                                </p>
+
+                                {/* Founder */}
+                                <div className="bg-white rounded-2xl p-5 md:p-6 border border-gray-100 flex items-center gap-4">
+                                    <div className="w-16 h-16 rounded-full bg-ivory overflow-hidden shrink-0">
+                                        <img src={data?.founderImg || 'https://i.pravatar.cc/150?img=12'} alt="Founder" className="w-full h-full object-cover" />
+                                    </div>
+                                    <div>
+                                        <h4 className="font-display text-lg font-semibold">{data?.founderName || 'Rajesh Kumar'}</h4>
+                                        <p className="text-gold text-xs tracking-wider">{data?.founderTitle || 'Founder & Director'}</p>
+                                        <p className="text-light text-[11px] mt-1 leading-relaxed">{data?.founderBio || 'A seasoned event professional with 6+ years in luxury weddings and large-scale event execution.'}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            );
+        };
+
+        // ─── LOCATIONS ─────────────────────────────────────────
+        const defaultLocations = ['Navi Mumbai', 'Mumbai', 'Karjat', 'Lonavala', 'Maharashtra', 'Destination Weddings'];
+        const Locations = ({ data }) => {
+            const [ref, isVisible] = useInView();
+            const locations = (data && data.length > 0) ? data : defaultLocations;
+
+            return (
+                <section className="py-16 md:py-20 bg-white" ref={ref}>
+                    <div className="max-w-4xl mx-auto px-5 md:px-8 text-center">
+                        <p className={`text-gold tracking-[0.2em] text-[10px] md:text-xs mb-3 fade-up ${isVisible ? 'visible' : ''}`}>WHERE WE CREATE</p>
+                        <h2 className={`font-display text-3xl md:text-4xl mb-8 fade-up ${isVisible ? 'visible' : ''}`} style={{transitionDelay:'0.1s'}}>
+                            Our Locations
+                        </h2>
+                        <div className={`flex flex-wrap justify-center gap-3 md:gap-4 mb-6 fade-up ${isVisible ? 'visible' : ''}`} style={{transitionDelay:'0.2s'}}>
+                            {locations.map((loc, i) => (
+                                <span key={i} className="px-5 py-2.5 bg-cream rounded-full text-xs tracking-wider font-medium text-secondary border border-gray-200">
+                                    {loc}
+                                </span>
+                            ))}
+                        </div>
+                        <p className={`text-light text-xs fade-up ${isVisible ? 'visible' : ''}`} style={{transitionDelay:'0.3s'}}>
+                            Available for celebrations across Maharashtra and selected destinations across India.
+                        </p>
+                    </div>
+                </section>
+            );
+        };
+
+        // ─── TESTIMONIALS ──────────────────────────────────────
+        const defaultTestimonials = [
+            { name: 'Priya & Arjun', wedding: 'Grand Wedding', location: 'The Leela, Mumbai', text: 'Sky Events turned our dream wedding into reality. Every detail — from the floral mandap to the guest hospitality — was executed flawlessly. We couldn\'t have asked for a better team.', img: 'https://i.pravatar.cc/150?img=5' },
+            { name: 'Meera & Vikram', wedding: 'Destination Wedding', location: 'Taj Palace, Delhi', text: 'Planning a destination wedding felt overwhelming until we found Sky Events. They managed everything — venue, décor, vendors, logistics — with such ease and professionalism.', img: 'https://i.pravatar.cc/150?img=11' },
+            { name: 'Ananya & Rohan', wedding: 'Royal Celebration', location: 'ITC Grand Chola, Chennai', text: 'The attention to detail was extraordinary. Every element of our wedding reflected our personalities. Sky Events truly understands how to create experiences, not just events.', img: 'https://i.pravatar.cc/150?img=3' },
+            { name: 'Kavya & Dev', wedding: 'Contemporary Wedding', location: 'JW Marriott, Pune', text: 'We wanted something modern and elegant, and Sky Events delivered exactly that. The minimalist décor, the lighting, the flow of events — everything was perfect.', img: 'https://i.pravatar.cc/150?img=8' }
+        ];
+        const Testimonials = ({ data }) => {
+            const [ref, isVisible] = useInView();
+            const [active, setActive] = useState(0);
+            const testimonials = (data && data.length > 0) ? data : defaultTestimonials;
+
+            useEffect(() => {
+                const timer = setInterval(() => setActive(prev => (prev + 1) % testimonials.length), 6000);
+                return () => clearInterval(timer);
+            }, [testimonials.length]);
+
+            return (
+                <section className="py-20 md:py-28 bg-cream" ref={ref}>
+                    <div className="max-w-4xl mx-auto px-5 md:px-8">
+                        <div className="text-center mb-12 md:mb-16">
+                            <p className={`text-gold tracking-[0.2em] text-[10px] md:text-xs mb-3 fade-up ${isVisible ? 'visible' : ''}`}>TESTIMONIALS</p>
+                            <h2 className={`font-display text-3xl md:text-5xl lg:text-6xl fade-up ${isVisible ? 'visible' : ''}`} style={{transitionDelay:'0.1s'}}>
+                                Words From Our Celebrations
+                            </h2>
+                        </div>
+
+                        <div className="relative min-h-[280px] md:min-h-[240px]">
+                            {testimonials.map((t, i) => (
+                                <div key={i} className={`absolute inset-0 transition-all duration-700 ${active === i ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'}`}>
+                                    <div className="bg-white rounded-2xl p-8 md:p-10 border border-gray-100 text-center">
+                                        <i className="fas fa-quote-left text-gold/20 text-3xl mb-4"></i>
+                                        <p className="text-secondary text-sm md:text-base leading-relaxed italic mb-6 max-w-2xl mx-auto">"{t.text}"</p>
+                                        <div className="flex justify-center gap-0.5 text-gold mb-4">
+                                            {[...Array(5)].map((_, j) => <i key={j} className="fas fa-star text-xs"></i>)}
+                                        </div>
+                                        <div className="flex items-center justify-center gap-3">
+                                            <img src={t.img} alt={t.name} className="w-10 h-10 rounded-full object-cover" />
+                                            <div className="text-left">
+                                                <h4 className="font-semibold text-sm">{t.name}</h4>
+                                                <p className="text-gold text-[10px] tracking-wider">{t.wedding} — {t.location}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+
+                        <div className="flex justify-center gap-2 mt-8">
+                            {testimonials.map((_, i) => (
+                                <button key={i} onClick={() => setActive(i)}
+                                    className={`h-1.5 rounded-full transition-all duration-500 ${active === i ? 'bg-gold w-8' : 'bg-gray-300 w-1.5 hover:bg-gray-400'}`}>
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+            );
+        };
+
+        // ─── CTA BANNER ────────────────────────────────────────
+        const CtaBanner = () => {
+            const [ref, isVisible] = useInView();
+            return (
+                <section className="py-20 md:py-28 relative overflow-hidden" ref={ref}>
+                    <div className="absolute inset-0 z-0">
+                        <img src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=2000"
+                             alt="Wedding" className="w-full h-full object-cover" />
+                        <div className="absolute inset-0 bg-warm-dark/85"></div>
+                    </div>
+                    <div className={`relative z-10 max-w-3xl mx-auto px-5 md:px-8 text-center fade-up ${isVisible ? 'visible' : ''}`}>
+                        <h2 className="font-display text-3xl md:text-5xl lg:text-6xl text-white mb-4 md:mb-6">
+                            Your Celebration Deserves<br />
+                            <span className="italic text-gold-light">a Thoughtful Beginning.</span>
+                        </h2>
+                        <p className="text-white/60 text-sm md:text-base mb-8 md:mb-10">
+                            Tell us what you're planning. We'll take it from there.
+                        </p>
+                        <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                            <a href="foam.html" className="bg-gold text-white px-8 py-3.5 rounded-full text-xs tracking-widest font-semibold hover:bg-gold-light transition-all">
+                                PLAN YOUR WEDDING
+                            </a>
+                            <a href="foam.html" className="border border-white/30 text-white px-8 py-3.5 rounded-full text-xs tracking-widest font-semibold hover:border-gold-light hover:text-gold-light transition-all">
+                                ENQUIRE NOW
+                            </a>
+                        </div>
+                    </div>
+                </section>
+            );
+        };
+
+        // ─── BRAND FAMILY ──────────────────────────────────────
+        const BrandFamily = () => (
+            <section className="py-12 md:py-16 bg-cream border-t border-gray-200">
+                <div className="max-w-5xl mx-auto px-5 md:px-8 text-center">
+                    <p className="text-light tracking-[0.2em] text-[10px] md:text-xs mb-6 uppercase">Explore Our Divisions</p>
+                    <div className="flex flex-wrap justify-center items-center gap-6 md:gap-10">
+                        <div className="text-center">
+                            <p className="font-display text-base md:text-lg font-semibold text-warm-dark">Sky Events</p>
+                            <p className="text-gold text-[10px] tracking-wider">Luxury Weddings</p>
+                        </div>
+                        <span className="text-gray-300">|</span>
+                        <div className="text-center">
+                            <p className="font-display text-base md:text-lg font-semibold text-light">Sky Events & Entertainment</p>
+                            <p className="text-light text-[10px] tracking-wider">Coming Soon</p>
+                        </div>
+                        <span className="text-gray-300">|</span>
+                        <div className="text-center">
+                            <p className="font-display text-base md:text-lg font-semibold text-light">KAD Events Pvt. Ltd.</p>
+                            <p className="text-light text-[10px] tracking-wider">Parent Company</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        );
+
+        // ─── FOOTER ────────────────────────────────────────────
+        const Footer = () => {
+            const [logoClicks, setLogoClicks] = useState(0);
+            const handleLogoClick = () => {
+                const newCount = logoClicks + 1;
+                setLogoClicks(newCount);
+                if (newCount >= 16) {
+                    setLogoClicks(0);
+                    window.location.href = 'admin.html';
+                }
+            };
+            return (
+            <footer className="bg-warm-darker text-white pt-14 md:pt-20 pb-6">
+                <div className="max-w-7xl mx-auto px-5 md:px-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 md:gap-12 mb-12">
+                        <div>
+                            <img src="logo.png" alt="Sky Events" onClick={handleLogoClick} className="h-10 w-auto mb-5 rounded-lg cursor-pointer" title={logoClicks > 0 ? `${16 - logoClicks} more clicks...` : ''} />
+                            <p className="text-white/40 text-xs leading-relaxed mb-5 max-w-xs">
+                                Luxury wedding planning and execution — from venue and design to hospitality and the final moment.
+                            </p>
+                            <div className="flex gap-3">
+                                <a href="#" className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-white/40 hover:text-gold hover:bg-white/10 transition-all"><i className="fab fa-instagram text-xs"></i></a>
+                                <a href="#" className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-white/40 hover:text-gold hover:bg-white/10 transition-all"><i className="fab fa-facebook-f text-xs"></i></a>
+                                <a href="#" className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-white/40 hover:text-gold hover:bg-white/10 transition-all"><i className="fab fa-pinterest text-xs"></i></a>
+                                <a href="#" className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-white/40 hover:text-gold hover:bg-white/10 transition-all"><i className="fab fa-youtube text-xs"></i></a>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h4 className="text-gold text-[10px] tracking-[0.2em] font-semibold mb-5 uppercase">Quick Links</h4>
+                            <ul className="space-y-3">
+                                {['Home', 'Weddings', 'Venues', 'Décor', 'Gallery', 'About', 'Contact'].map(link => (
+                                    <li key={link}><a href={`#${link.toLowerCase()}`} className="text-white/40 text-xs hover:text-gold transition-colors">{link}</a></li>
+                                ))}
+                            </ul>
+                        </div>
+
+                        <div>
+                            <h4 className="text-gold text-[10px] tracking-[0.2em] font-semibold mb-5 uppercase">Services</h4>
+                            <ul className="space-y-3">
+                                {['Wedding Planning', 'Venue Selection', 'Décor & Styling', 'Event Production', 'Photography', 'Entertainment', 'Guest Management', 'Complete Execution'].map(link => (
+                                    <li key={link}><a href={link === 'Contact' ? 'foam.html' : `#${link.toLowerCase()}`} className="text-white/40 text-xs hover:text-gold transition-colors">{link}</a></li>
+                                ))}
+                            </ul>
+                        </div>
+
+                        <div>
+                            <h4 className="text-gold text-[10px] tracking-[0.2em] font-semibold mb-5 uppercase">Contact</h4>
+                            <ul className="space-y-4 mb-6">
+                                <li className="flex items-start gap-3">
+                                    <i className="fas fa-phone-alt text-gold text-xs mt-0.5"></i>
+                                    <span className="text-white/40 text-xs">+91 98765 43210</span>
+                                </li>
+                                <li className="flex items-start gap-3">
+                                    <i className="fas fa-envelope text-gold text-xs mt-0.5"></i>
+                                    <span className="text-white/40 text-xs">hello@skyevents.com</span>
+                                </li>
+                                <li className="flex items-start gap-3">
+                                    <i className="fas fa-map-marker-alt text-gold text-xs mt-0.5"></i>
+                                    <span className="text-white/40 text-xs leading-relaxed">123, Business Park, BKC, Navi Mumbai - 400051</span>
+                                </li>
+                            </ul>
+                            <h4 className="text-gold text-[10px] tracking-[0.2em] font-semibold mb-3 uppercase">Newsletter</h4>
+                            <div className="flex">
+                                <input type="email" placeholder="Your email" className="bg-white/5 border border-white/10 px-3 py-2 w-full text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-gold transition-colors rounded-l-full" />
+                                <button className="bg-gold text-white px-4 rounded-r-full hover:bg-gold-light transition-all">
+                                    <i className="fas fa-arrow-right text-xs"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="border-t border-white/10 pt-6 flex flex-col md:flex-row justify-between items-center gap-3 text-[10px] text-white/30">
+                        <p>&copy; 2024 Sky Events — A Division of Kad Events Pvt. Ltd. All Rights Reserved.</p>
+                        <div className="flex gap-4">
+                            <a href="#" className="hover:text-gold transition-colors">Privacy Policy</a>
+                            <a href="#" className="hover:text-gold transition-colors">Terms & Conditions</a>
+                            <a href="admin.html" className="hover:text-gold transition-colors">Admin</a>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        );
+        };
+
+        // ─── WHATSAPP BUTTON ───────────────────────────────────
+        const WhatsApp = () => (
+            <a href="https://wa.me/919876543210?text=Hi%2C%20I%27m%20interested%20in%20planning%20a%20wedding%20with%20Sky%20Events."
+               target="_blank" rel="noopener noreferrer"
+               className="whatsapp-float" title="Let's Plan Your Wedding">
+                <i className="fab fa-whatsapp text-white text-2xl"></i>
+            </a>
+        );
+
+        // ─── APP ───────────────────────────────────────────────
+        const App = () => {
+            const siteData = useSiteData();
+            return (
+                <div>
+                    <Navbar />
+                    <Hero />
+                    <BrandStatement />
+                    <OurWeddings data={siteData.weddings} />
+                    <Venues data={siteData.venues} />
+                    <Decor data={siteData.decor} />
+                    <Services />
+                    <WhySkyEvents />
+                    <Stats data={siteData.stats} />
+                    <Gallery data={siteData.gallery} />
+                    <About data={siteData.about} />
+                    <Locations data={siteData.locations} />
+                    <Testimonials data={siteData.testimonials} />
+                    <CtaBanner />
+                    <BrandFamily />
+                    <Footer />
+                    <WhatsApp />
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
